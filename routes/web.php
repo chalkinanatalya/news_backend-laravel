@@ -18,7 +18,7 @@ Route::get('/news', function () {
 });
 
 Route::get('/news/{name}', static function (string $name): string {
-    return "Hello, {$name}";
+    return "Hello, {$name}, glad to see you!";
 });
 
 Route::get('/news/{info}', static function (): string {
