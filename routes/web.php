@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,19 +14,18 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/news', function () {
+Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/news/{name}', static function (string $name): string {
-    return "Hello, {$name}, glad to see you!";
-});
+Route::group(['prefix' => ''], static function () {
+    Route::get('/news', [NewsController::class, 'index'])
+    ->name('news');
 
-Route::get('/news/{info}', static function (): string {
-    return "Site with lots of news";
-});
+    Route::get('/categories', [CategoryController::class, 'index'])
+    ->name('categories');
 
-Route::get('/news/{id}', static function (int $id): string {
-    return "Piece of news num {$id}";
+    Route::get('/news/{id}/show', [NewsController::class, 'show'])
+    ->where('id', '\d+')
+    ->name('news.show');
 });
