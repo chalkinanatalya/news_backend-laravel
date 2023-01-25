@@ -11,7 +11,7 @@ class CategoryController extends Controller
     use NewsTrait;
     public function index()
     {
-        return \view('categories.index', [
+        return \view('categories.categories', [
             'categories' => $this->getCategory(),
         ]);
     }
