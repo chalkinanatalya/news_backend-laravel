@@ -39,7 +39,7 @@
           </div>
         @empty
             <h2>Something went wrong...</h2>
-    @endforelse
+        @endforelse
         <hr>
       </div> <!-- /container -->
 
