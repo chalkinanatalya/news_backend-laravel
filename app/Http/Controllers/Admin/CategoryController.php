@@ -46,7 +46,7 @@ class CategoryController extends Controller
         $request->validate([
             'title' => 'required',
         ]);
-
+        //dd($request->except('_token', 'category_id'));
         $category = new Category ($request->except('_token', 'category_id'));
 
         if ($category->save()) {
@@ -89,7 +89,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category): RedirectResponse
     {
-        $category = $category->fill($request->except('_token', 'category_ids'));
+        $category = $category->fill($request->except('_token'));
 
         if ($category->save()) {
             return redirect()->route('admin.categories.index')->with('success', 'Category updated');

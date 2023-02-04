@@ -13,9 +13,8 @@
             @endforeach
         @endif
 
-
         <form method="post" action="{{ route('admin.news.update', ['news' => $news], ['sources' => $sources]) }}">
-            @csrf
+        @csrf
             @method('put')
             <div class="form-group">
                 <label for="category_ids">Category</label>
@@ -32,7 +31,7 @@
                 <select class="form-control" name="source_id" id="source_id">
                     <option value="0">--Select--</option>
                     @foreach($sources as $source)
-                        <option @if($source->id === $news->source_id) selected @endif value="{{ $source->id }}">{{ $source->id }}</option>
+                        <option @if($source->id === $news->sources->pluck('id')[0]) selected @endif value="{{ $source->id }}">{{ $source->title }}</option>
                     @endforeach
                 </select>
             </div>

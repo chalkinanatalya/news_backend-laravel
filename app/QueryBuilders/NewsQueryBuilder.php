@@ -26,7 +26,7 @@ final class NewsQueryBuilder extends QueryBuilder
 
     public function getNewsWithPagination(int $quantity = 10): LengthAwarePaginator
     {
-        return $this->model->with('categories')->paginate($quantity);
+        return $this->model->with('categories','sources')->paginate($quantity);
     }
 
     function getAll(): Collection

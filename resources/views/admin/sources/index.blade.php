@@ -21,7 +21,7 @@
               </tr>
             </thead>
             <tbody>
-            @forelse($sources as $source)
+            @forelse($sourcesList as $source)
              <tr>
                  <td>{{ $source->id }}</td>
                  <td>{{ $source->title }}</td>
@@ -37,6 +37,7 @@
             @endforelse
             </tbody>
         </table>
+        {{ $sourcesList->links() }}
     </div>
 
 @endsection

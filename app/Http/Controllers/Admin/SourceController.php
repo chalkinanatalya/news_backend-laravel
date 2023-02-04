@@ -19,7 +19,7 @@ class SourceController extends Controller
     public function index(SourcesQueryBuilder $sourcesQueryBuilder): View
     {
         return \view('admin.sources.index',[
-            'sources' => $sourcesQueryBuilder->getSourcesWithPagination(),
+            'sourcesList' => $sourcesQueryBuilder->getSourcesWithPagination(),
         ]);
     }
 

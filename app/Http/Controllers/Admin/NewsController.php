@@ -60,6 +60,7 @@ class NewsController extends Controller
 
         if ($news->save()) {
             $news->categories()->sync((array) $request->input('category_ids'));
+            $news->sources()->sync((array) $request->input('source_id'));
             return \redirect()->route('admin.news.index')->with('success', 'New added successfully');
         }
 
@@ -103,7 +104,7 @@ class NewsController extends Controller
      */
     public function update (Request $request, News $news): RedirectResponse
     {
-        $news = $news->fill(array('source_id' => $request->all()['source_id']));
+        $news = $news->fill($request->all());
         if ($news->save()) {
             $news->categories()->sync((array) $request->input('category_ids'));
             $news->sources()->sync((array) $request->input('source_id'));
