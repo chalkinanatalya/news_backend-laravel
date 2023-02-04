@@ -1,27 +1,25 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Source;
+use App\QueryBuilders\SourcesQueryBuilder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
-use App\QueryBuilders\CategoriesQueryBuilder;
-use Illuminate\Http\RedirectResponse;
 
-class CategoryController extends Controller
+class SourceController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return View
      */
-    public function index(CategoriesQueryBuilder $categoriesQueryBuilder): View
+    public function index(SourcesQueryBuilder $sourcesQueryBuilder): View
     {
-        return \view('admin.categories.index', [
-            'categoriesList' => $categoriesQueryBuilder->getCategoriesWithPagination(),
+        return \view('admin.sources.index',[
+            'sources' => $sourcesQueryBuilder->getSourcesWithPagination(),
         ]);
     }
 
@@ -32,7 +30,7 @@ class CategoryController extends Controller
      */
     public function create(): View
     {
-        return \view('admin.categories.create');
+        return \view('admin.sources.create');
     }
 
     /**
@@ -47,13 +45,13 @@ class CategoryController extends Controller
             'title' => 'required',
         ]);
 
-        $category = new Category ($request->except('_token', 'category_id'));
+        $source = new Source ($request->except('_token', 'source_id'));
 
-        if ($category->save()) {
-            return \redirect()->route('admin.categories.index')->with('success', 'Category added successfully');
+        if ($source->save()) {
+            return \redirect()->route('admin.sources.index')->with('success', 'Source added successfully');
         }
 
-        return \back()->with('error', 'Category is not saved');
+        return \back()->with('error', 'Source is not saved');
     }
 
     /**
@@ -70,13 +68,13 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Category $category
+     * @param  Source $source
      * @return View
      */
-    public function edit(Category $category): View
+    public function edit(Source $source): View
     {
-        return \view('admin.categories.edit',[
-            'category'=>  $category,
+        return \view('admin.sources.edit',[
+            'source'=>  $source,
         ]);
     }
 
@@ -84,18 +82,18 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Category $category
+     * @param  Source $source
      * @return RedirectResponse
      */
-    public function update(Request $request, Category $category): RedirectResponse
+    public function update(Request $request, Source $source): RedirectResponse
     {
-        $category = $category->fill($request->except('_token', 'category_ids'));
+        $source = $source->fill($request->except('_token', 'source_ids'));
 
-        if ($category->save()) {
-            return redirect()->route('admin.categories.index')->with('success', 'Category updated');
+        if ($source->save()) {
+            return redirect()->route('admin.sources.index')->with('success', 'Source updated');
         }
 
-        return \back()->with('error', 'Category is not updated');
+        return \back()->with('error', 'Source is not updated');
     }
 
     /**

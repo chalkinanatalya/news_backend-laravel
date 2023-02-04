@@ -18,7 +18,10 @@ class NewsSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('news')->truncate();
         DB::table('news')->insert($this->getData());
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
     private function getData(): array
@@ -31,8 +34,7 @@ class NewsSeeder extends Seeder
                 'status' => NewsStatus::DRAFT->value,
                 'description' => \fake()->text(100),
                 'created_at'  => \now(),
-                'updated_at' => \now(),
-                'source_id' => \fake()->randomDigit() + 1,
+                'updated_at' => \now()
             ];
         }
 

@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('content')
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        <h1 class="h2">Categories</h1>
+        <h1 class="h2">Sources</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
 
 
@@ -14,21 +14,21 @@
               <tr>
                   <th>#ID</th>
                   <th>Header</th>
-                  <th>Description</th>
+                  <th>URL</th>
                   <th>Created At</th>
                   <th>Updated At</th>
                   <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-            @forelse($categoriesList as $categories)
+            @forelse($sources as $source)
              <tr>
-                 <td>{{ $categories->id }}</td>
-                 <td>{{ $categories->title }}</td>
-                 <td>{{ $categories->description }}</td>
-                 <td>{{ $categories->created_at }}</td>
-                 <td>{{ $categories->updated_at }}</td>
-                 <td><a href="{{ route('admin.categories.edit', ['category' => $categories]) }}">Change</a> &nbsp; <a href="" style="color: red;">Del.</a> </td>
+                 <td>{{ $source->id }}</td>
+                 <td>{{ $source->title }}</td>
+                 <td>{{ $source->url }}</td>
+                 <td>{{ $source->created_at }}</td>
+                 <td>{{ $source->updated_at }}</td>
+                 <td><a href="{{ route('admin.sources.edit', ['source' => $source]) }}">Change</a> &nbsp; <a href="" style="color: red;">Del.</a> </td>
              </tr>
             @empty
                 <tr>
