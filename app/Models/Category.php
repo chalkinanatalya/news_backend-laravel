@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,10 +19,6 @@ class Category extends Model
     protected $fillable = [
         'title',
         'description',
-    ];
-
-    protected $casts = [
-        'news_id' => 'array',
     ];
 
     public function news(): BelongsToMany

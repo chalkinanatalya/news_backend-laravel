@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Source\CreateRequest;
+use App\Http\Requests\Source\EditRequest;
 use App\Models\Source;
 use App\QueryBuilders\SourcesQueryBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
 
 class SourceController extends Controller
 {
@@ -36,16 +40,13 @@ class SourceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param CreateRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateRequest $request): RedirectResponse
     {
-        $request->validate([
-            'title' => 'required',
-        ]);
 
-        $source = new Source ($request->except('_token', 'source_id'));
+        $source = Source::create ($request->validated());
 
         if ($source->save()) {
             return \redirect()->route('admin.sources.index')->with('success', 'Source added successfully');
@@ -81,13 +82,13 @@ class SourceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param EditRequest $request
      * @param  Source $source
      * @return RedirectResponse
      */
-    public function update(Request $request, Source $source): RedirectResponse
+    public function update(EditRequest $request, Source $source): RedirectResponse
     {
-        $source = $source->fill($request->except('_token', 'source_ids'));
+        $source = $source->fill($request->validated());
 
         if ($source->save()) {
             return redirect()->route('admin.sources.index')->with('success', 'Source updated');
@@ -99,11 +100,19 @@ class SourceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param Source $source
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Source $source): JsonResponse
     {
-        //
+        try{
+            $source->delete();
+
+            return \response()->json('ok');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage(), [$exception]);
+
+            return \response()->json('error', 400);
+        }
     }
 }

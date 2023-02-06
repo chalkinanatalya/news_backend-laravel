@@ -17,7 +17,7 @@
         @csrf
             <div class="form-group">
                 <label for="category_ids">Category</label>
-                <select class="form-control" name="category_ids[]" id="category_ids" multiple>
+                <select class="form-control @error('category_ids[]') is-invalid @enderror" name="category_ids[]" id="category_ids" multiple>
                     <option value="0">--Select--</option>
                     @foreach($categories as $category)
                         <option @if((int)old('category_ids') === $category->id) selected @endif value="{{ $category->id }}">{{ $category->title }}</option>
@@ -35,15 +35,15 @@
             </div>
             <div class="form-group">
             <label for="title">Header</label>
-            <input type="text" id="title" name="title" value="{{ old('title') }}" class="form-control">
+            <input type="text" id="title" name="title" value="{{ old('title') }}" class="form-control @error('title') is-invalid @enderror">
             </div>
             <div class="form-group">
                 <label for="author">Author</label>
-                <input type="text" id="author" name="author" value="{{ old('author') }}" class="form-control">
+                <input type="text" id="author" name="author" value="{{ old('author') }}" class="form-control @error('author') is-invalid @enderror">
             </div>
             <div class="form-group">
                 <label for="status">Status</label>
-                <select class="form-control" name="status" id="status">
+                <select class="form-control @error('status') is-invalid @enderror" name="status" id="status">
                     @foreach($statuses as $status)
                         <option @if(old('status') === $status) selected @endif>{{ $status}}</option>
                     @endforeach
@@ -55,7 +55,7 @@
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea class="form-control" id="description" name="description">{{ old('description') }}</textarea>
+                <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description">{{ old('description') }}</textarea>
             </div>
 
             <br>
