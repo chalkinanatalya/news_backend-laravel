@@ -4,40 +4,29 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\NewsStatus;
 use App\Http\Controllers\Controller;
 use App\Models\News;
-use Illuminate\Http\Request;
+use App\QueryBuilders\CategoriesQueryBuilder;
+use App\QueryBuilders\NewsQueryBuilder;
+use App\QueryBuilders\SourcesQueryBuilder;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class NewsController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * @param NewsQueryBuilder $newsQueryBuilder
      * @return \Illuminate\Http\Response
      */
-    public function index(): View
+    public function index(NewsQueryBuilder $newsQueryBuilder): View
     {
-        $model = new News();
-        $newsList = $model->getNews();
-        $join = DB::table('news')
-            ->join('category_has_news as chn', 'news.id', '=', 'chn.news_id')
-            ->leftJoin('categories', 'chn.category_id', '=', 'categories.id')
-            ->leftjoin('sources', 'news.source_id', '=', 'sources.id')
-            ->select("news.*", 'chn.category_id', 'categories.title as ctitle', 'sources.title as stitle')
-            ->get();
-
-        $where = DB::table('news')->where([
-            ['title', 'like', '%ti%'],
-            ['id', '>', 3],
-        ])->orWhere('status', '=', 'active')->toSql();
-
-        $where_new = DB::table('news')->whereNotIn('id', [3,6])->get();
-
-        // dd($join, $where, $where_new);
         return \view('admin.news.index', [
-            'newsList' => $join,
+            'newsList' => $newsQueryBuilder->getNewsWithPagination(),
         ]);
     }
 
@@ -46,24 +35,36 @@ class NewsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(): View
+    public function create(CategoriesQueryBuilder $categoriesQueryBuilder, SourcesQueryBuilder $sourcesQueryBuilder): View
     {
-        return \view('admin.news.create');
+        return \view('admin.news.create', [
+            'categories' => $categoriesQueryBuilder->getAll(),
+            'sources' => $sourcesQueryBuilder->getAll(),
+            'statuses' => NewsStatus::all(),
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'title' => 'required',
         ]);
 
-        return response()->json($request->only(['title', 'author', 'description']));
+        $news = new News($request->except('_token', 'category_id'));
+
+        if ($news->save()) {
+            $news->categories()->sync((array) $request->input('category_ids'));
+            $news->sources()->sync((array) $request->input('source_id'));
+            return \redirect()->route('admin.news.index')->with('success', 'New added successfully');
+        }
+
+        return \back()->with('error', 'News is not saved');
     }
 
     /**
@@ -80,24 +81,37 @@ class NewsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param News $news
+     * @param CategoriesQueryBuilder $categoriesQueryBuilder
+     * @return View
      */
-    public function edit($id)
+    public function edit(News $news, CategoriesQueryBuilder $categoriesQueryBuilder, SourcesQueryBuilder $sourcesQueryBuilder)
     {
-        //
+        return \view('admin.news.edit', [
+            'news' => $news,
+            'categories' => $categoriesQueryBuilder->getAll(),
+            'sources' => $sourcesQueryBuilder->getAll(),
+            'statuses' => NewsStatus::all(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param News $news
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update (Request $request, News $news): RedirectResponse
     {
-        //
+        $news = $news->fill($request->all());
+        if ($news->save()) {
+            $news->categories()->sync((array) $request->input('category_ids'));
+            $news->sources()->sync((array) $request->input('source_id'));
+            return \redirect()->route('admin.news.index')->with('success', 'News updated successfully');
+        }
+
+        return \back()->with('error', 'News is not saved');
     }
 
     /**

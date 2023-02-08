@@ -6,8 +6,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class News extends Model
 {
@@ -15,13 +17,26 @@ class News extends Model
 
     protected $table = 'news';
 
-    public function getNews(): Collection
-    {
-       return DB::table($this->table)->select(['id', 'title', 'author', 'status', 'description', 'created_at', 'source_id'])->get();
-    }
+    protected $fillable = [
+        'title',
+        'author',
+        'status',
+        'image',
+        'description',
+    ];
 
-    public function getNewsById(int $id): mixed
+    protected $casts = [
+        'categories_id' => 'array',
+    ];
+
+    public function categories(): BelongsToMany
     {
-        return DB::table($this->table)->find($id, ['id', 'title']);
+        return $this->belongsToMany(Category::class, 'category_has_news',
+            'news_id', 'category_id', 'id', 'id');
+    }
+    public function sources(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'source_has_news',
+            'news_id', 'source_id', 'id', 'id');
     }
 }
