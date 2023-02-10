@@ -15,13 +15,17 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Requests\News\CreateRequest;
+use App\Http\Requests\News\EditRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class NewsController extends Controller
 {
     /**
      * Display a listing of the resource.
      * @param NewsQueryBuilder $newsQueryBuilder
-     * @return \Illuminate\Http\Response
+     * @return View
      */
     public function index(NewsQueryBuilder $newsQueryBuilder): View
     {
@@ -33,7 +37,9 @@ class NewsController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param CategoriesQueryBuilder $categoriesQueryBuilder
+     * @param SourcesQueryBuilder $sourcesQueryBuilder
+     * @return View
      */
     public function create(CategoriesQueryBuilder $categoriesQueryBuilder, SourcesQueryBuilder $sourcesQueryBuilder): View
     {
@@ -47,24 +53,22 @@ class NewsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param CreateRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateRequest $request): RedirectResponse
     {
-        $request->validate([
-            'title' => 'required',
-        ]);
 
-        $news = new News($request->except('_token', 'category_id'));
+        $news = News::create($request->validated());
 
-        if ($news->save()) {
-            $news->categories()->sync((array) $request->input('category_ids'));
+        if ($news) {
+            $news->categories()->attach($request->getCategoryIds());
+            // $news->categories()->sync((array) $request->input('category_ids'));
             $news->sources()->sync((array) $request->input('source_id'));
-            return \redirect()->route('admin.news.index')->with('success', 'New added successfully');
+            return \redirect()->route('admin.news.index')->with('success', __('messages.admin.news.success'));
         }
 
-        return \back()->with('error', 'News is not saved');
+        return \back()->with('error', __('messages.admin.news.fail'));
     }
 
     /**
@@ -98,30 +102,39 @@ class NewsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param EditRequest $request
      * @param News $news
      * @return RedirectResponse
      */
-    public function update (Request $request, News $news): RedirectResponse
+    public function update (EditRequest $request, News $news): RedirectResponse
     {
-        $news = $news->fill($request->all());
+        $news = $news->fill($request->validated());
         if ($news->save()) {
-            $news->categories()->sync((array) $request->input('category_ids'));
+            //$news->categories()->sync((array) $request->input('category_ids'));
+            $news->categories()->sync($request->getCategoryIds());
             $news->sources()->sync((array) $request->input('source_id'));
-            return \redirect()->route('admin.news.index')->with('success', 'News updated successfully');
+            return \redirect()->route('admin.news.index')->with('success', __('messages.admin.news.success'));
         }
 
-        return \back()->with('error', 'News is not saved');
+        return \back()->with('error', __('messages.admin.news.fail'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param News $news
+     * @return Response
      */
-    public function destroy($id)
+    public function destroy(News $news): JsonResponse
     {
-        //
+        try{
+            $news->delete();
+
+            return \response()->json('ok');
+        } catch (\Exception $exception) {
+            Log::error($exception->getMessage(), [$exception]);
+
+            return \response()->json('error', 400);
+        }
     }
 }

@@ -28,7 +28,8 @@
                  <td>{{ $source->url }}</td>
                  <td>{{ $source->created_at }}</td>
                  <td>{{ $source->updated_at }}</td>
-                 <td><a href="{{ route('admin.sources.edit', ['source' => $source]) }}">Change</a> &nbsp; <a href="" style="color: red;">Del.</a> </td>
+                 <td><a href="{{ route('admin.sources.edit', ['source' => $source]) }}">Change</a> &nbsp;
+                    <a href="javascript:;" class="delete" rel="{{ $source->id }}" style="color: red;">Delete</a></td>
              </tr>
             @empty
                 <tr>
@@ -41,3 +42,35 @@
     </div>
 
 @endsection
+
+@push('js')
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            let elements = document.querySelectorAll(".delete");
+            elements.forEach(function(e, k) {
+                e.addEventListener("click", function() {
+                const id = this.getAttribute('rel');
+                if(confirm(`Do you confirm deleting post with #ID = ${id}`)) {
+                    send(`/admin/sources/${id}`).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    alert("Deleting cancelled");
+                }
+            });
+            });
+        });
+
+        async function send(url) {
+            let response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            let result = await response.json();
+            return result.ok;
+        }
+    </script>
+@endpush

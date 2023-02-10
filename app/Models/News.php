@@ -6,10 +6,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class News extends Model
 {
@@ -28,6 +26,14 @@ class News extends Model
     protected $casts = [
         'categories_id' => 'array',
     ];
+
+    protected function author(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value): string => strtoupper($value),
+            set: fn($value): string => strtolower($value)
+        );
+    }
 
     public function categories(): BelongsToMany
     {
