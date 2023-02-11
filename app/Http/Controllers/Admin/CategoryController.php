@@ -8,8 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\CreateRequest;
 use App\Http\Requests\Category\EditRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
+
 use App\QueryBuilders\CategoriesQueryBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
