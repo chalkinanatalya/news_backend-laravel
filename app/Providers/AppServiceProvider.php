@@ -7,6 +7,8 @@ use App\QueryBuilders\NewsQueryBuilder;
 use App\QueryBuilders\QueryBuilder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
+use App\Services\ParserService;
+use App\Services\Contracts\Parser;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,7 +21,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(QueryBuilder::class, CategoriesQueryBuilder::class);
         $this->app->bind(QueryBuilder::class, NewsQueryBuilder::class);
-    }                                          
+        $this->app->bind(Parser::class, ParserService::class);
+        $this->app->bind(Social::class, SocialService::class);
+    }
 
     /**
      * Bootstrap any application services.
