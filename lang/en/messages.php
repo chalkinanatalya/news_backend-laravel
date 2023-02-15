@@ -14,5 +14,9 @@ return [
             'success' => 'Source is added successfully',
             'fail' => 'Source is not saved',
         ],
+        'users' => [
+            'success' => 'User is added successfully',
+            'fail' => 'User is not saved',
+        ],
     ]
 ];
