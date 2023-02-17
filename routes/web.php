@@ -8,11 +8,13 @@ use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\IndexController as AdminController;
+use App\Http\Controllers\Admin\ParserController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\SourceController as AdminSourceController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\SocialProvidersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +38,7 @@ Route::group(['middleware' => 'auth'], static function () {
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'is.admin'], static function () {
         Route::get('/', AdminController::class)
         ->name('index');
+        Route::get('parser', [ParserController::class, '__invoke'])->name('parser');
         Route::resource('categories', AdminCategoryController::class);
         Route::resource('news', AdminNewsController::class);
         Route::resource('sources', AdminSourceController::class);
@@ -77,20 +80,13 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Route::get('collection', function() {
-//     $names = ['names' => ['Ann', 'Billy', 'Sam', 'Jhon', 'Andy', 'Feeby', 'Edd', 'Jil', 'Jeck', 'Freddy']];
-//     $collection = collect([
-//         ['product' => 'Desk', 'price' => 200],
-//         ['product' => 'Chair', 'price' => 100],
-//         ['product' => 'Bookcase', 'price' => 150],
-//         ['product' => 'Door', 'price' => 100],
-//     ]);
+Route::group(['middleware' => 'guest'], function(){
 
-//     $collect = \collect($names);
+    Route::get('/auth/redirect/{driver}', [SocialProvidersController::class, 'redirect'])
+        -> where('driver', '\w+')
+        ->name('social.auth.redirect');
 
-//     dd($collection->where('price', 100)->toJson());
+    Route::get('/auth/callback/{driver}', [SocialProvidersController::class, 'callback'])
+        -> where('driver', '\w+');
+});
 
-//     dd($collect->toJson());
-
-
-// });

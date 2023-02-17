@@ -58,9 +58,7 @@ class NewsController extends Controller
      */
     public function store(CreateRequest $request): RedirectResponse
     {
-
         $news = News::create($request->validated());
-
         if ($news) {
             $news->categories()->attach($request->getCategoryIds());
             // $news->categories()->sync((array) $request->input('category_ids'));
