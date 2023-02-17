@@ -19,26 +19,38 @@ class ParserService implements Parser
         return $this;
     }
 
-    public function getParseData(): array
+    public function saveParseData(): void
     {
-       $xml = XmlParser::load($this->link);
+        $xml = XmlParser::load($this->link);
 
-       return $xml->parse([
-        'title' => [
-            'uses' => 'channel.title'
-        ],
-        'description' => [
-            'uses' => 'channel.description'
-        ],
-        'link' => [
-            'uses' => 'channel.link'
-        ],
-        'image' => [
-            'uses' => 'channel.image.url'
-        ],
-        'news' => [
-            'uses' => 'channel.item[title,link,description,guid,pubDate,image]'
-        ]
-    ]);
+        $data = $xml->parse([
+            'title' => [
+                'uses' => 'channel.title'
+            ],
+            'description' => [
+                'uses' => 'channel.description'
+            ],
+            'link' => [
+                'uses' => 'channel.link'
+            ],
+            'image' => [
+                'uses' => 'channel.image.url'
+            ],
+            'news' => [
+                'uses' => 'channel.item[title,link,description,guid,pubDate,image]'
+            ]
+        ]);
+
+        foreach ($data['news'] as $news) {
+            $newsData = [
+                'title' => $news['title'],
+                'author' => 'admin',
+                'status' => 'draft',
+                'description' => $news['description'],
+                'url' => $news['link'],
+                'image' => $news['image'],
+            ];
+            News::create($newsData);
+        }
     }
 }

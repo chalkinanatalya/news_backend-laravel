@@ -2,7 +2,7 @@
     <div class="row flex-nowrap justify-content-between align-items-center">
 
         <div class="col-4 text-center">
-            <a class="blog-header-logo text-dark" href="#">Fresh News Portal</a>
+            <a class="blog-header-logo text-dark" href="{{route('news')}}">Fresh News Portal</a>
         </div>
         <div class="col-4 d-flex justify-content-end align-items-center">
             <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">

@@ -23,15 +23,68 @@ class SourceSeeder extends Seeder
 
     private function getData(): array
     {
-        $data = [];
-        for ($i = 0; $i < 10; $i++) {
-            $data[] = [
-                'title' => \fake()->company(),
-                'url' => \fake()->url(),
+        $data = [
+            [
+                'title' => 'CBS Main',
+                'url' => 'https://www.cbsnews.com/latest/rss/main',
                 'created_at'  => \now(),
                 'updated_at' => \now(),
-            ];
-        }
+            ],
+            [
+                'title' => 'CBS US',
+                'url' => 'https://www.cbsnews.com/latest/rss/us',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ],
+            [
+                'title' => 'CBS Politics',
+                'url' => 'https://www.cbsnews.com/latest/rss/politics',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ],
+            [
+                'title' => 'CBS World',
+                'url' => 'https://www.cbsnews.com/latest/rss/world',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ],
+            [
+                'title' => 'CBS Health',
+                'url' => 'https://www.cbsnews.com/latest/rss/health',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ],
+            [
+                'title' => 'CBS Moneywatch',
+                'url' => 'https://www.cbsnews.com/latest/rss/moneywatch',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ],
+            [
+                'title' => 'CBS Science',
+                'url' => 'https://www.cbsnews.com/latest/rss/science',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ],
+            [
+                'title' => 'CBS Technology',
+                'url' => 'https://www.cbsnews.com/latest/rss/technology',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ],
+            [
+                'title' => 'CBS Entertainment',
+                'url' => 'https://www.cbsnews.com/latest/rss/entertainment',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ],
+            [
+                'title' => 'CBS News Investigates',
+                'url' => 'https://www.cbsnews.com/latest/rss/evening-news/cbs-news-investigates',
+                'created_at'  => \now(),
+                'updated_at' => \now(),
+            ]
+        ];
 
         return $data;
     }
