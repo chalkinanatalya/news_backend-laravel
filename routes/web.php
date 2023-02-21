@@ -52,6 +52,10 @@ Route::group(['prefix' => ''], static function () {
     Route::get('/news', [NewsController::class, 'index'])
     ->name('news');
 
+    Route::get('/news/{news}', [NewsController::class, 'show'])
+        ->where('news', '\d+')
+        ->name('news.show');
+
     Route::get('/categories', [CategoryController::class, 'index'])
     ->name('categories');
 
@@ -61,8 +65,8 @@ Route::group(['prefix' => ''], static function () {
     Route::get('/order', [OrderController::class, 'index'])
     ->name('order');
 
-    Route::get('/news/{id}/show', [NewsController::class, 'show'])
-    ->where('id', '\d+')
+    Route::get('/news/{news}/show', [NewsController::class, 'show'])
+    ->where('news', '\d+')
     ->name('news.show');
 });
 
@@ -90,3 +94,6 @@ Route::group(['middleware' => 'guest'], function(){
         -> where('driver', '\w+');
 });
 
+Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});

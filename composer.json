@@ -17,7 +17,8 @@
         "laravel/ui": "^4.2",
         "orchestra/parser": "^7.0",
         "socialiteproviders/facebook": "^4.1",
-        "socialiteproviders/github": "^4.1"
+        "socialiteproviders/github": "^4.1",
+        "unisharp/laravel-filemanager": "^2.5"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7",

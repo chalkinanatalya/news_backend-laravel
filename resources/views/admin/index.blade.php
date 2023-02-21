@@ -14,12 +14,7 @@
 
 
     <div class="table-responsive">
-        @include('inc.info', ['status' => 'complete'])
-
-        <x-alert type="info" message="Informational message"></x-alert>
-        <x-alert type="danger" message="Informational message"></x-alert>
-        <x-alert type="warning" message="Informational message"></x-alert>
-        <x-alert type="success" message="Informational message"></x-alert>
+        <a href="{{ route('admin.parser') }}">Parse news</a>
     </div>
 @endsection
 

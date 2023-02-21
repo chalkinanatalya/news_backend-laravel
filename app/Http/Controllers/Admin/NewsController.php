@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\NewsStatus;
-use App\Http\Controllers\Controller;
 use App\Models\News;
 use App\QueryBuilders\CategoriesQueryBuilder;
 use App\QueryBuilders\NewsQueryBuilder;
 use App\QueryBuilders\SourcesQueryBuilder;
-use Illuminate\Auth\Events\Validated;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use App\Http\Requests\News\CreateRequest;
 use App\Http\Requests\News\EditRequest;
+use App\Http\Controllers\Controller;
+use App\Services\UploadService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
@@ -104,11 +103,15 @@ class NewsController extends Controller
      * @param News $news
      * @return RedirectResponse
      */
-    public function update (EditRequest $request, News $news): RedirectResponse
+    public function update(EditRequest $request, News $news, UploadService $uploadService): RedirectResponse
     {
-        $news = $news->fill($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $uploadService->uploadImage($request->file('image'));
+        }
+        $news = $news->fill($validated);
         if ($news->save()) {
-            //$news->categories()->sync((array) $request->input('category_ids'));
             $news->categories()->sync($request->getCategoryIds());
             $news->sources()->sync((array) $request->input('source_id'));
             return \redirect()->route('admin.news.index')->with('success', __('messages.admin.news.success'));

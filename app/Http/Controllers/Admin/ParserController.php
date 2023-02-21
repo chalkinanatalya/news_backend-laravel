@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\News;
+use App\Jobs\JobNewsParsing;
+use App\QueryBuilders\SourcesQueryBuilder;
 use Illuminate\Http\Request;
 use App\Services\Contracts\Parser;
-use Orchestra\Parser\Xml\Facade as XmlParser;
 
 class ParserController extends Controller
 {
@@ -14,23 +16,16 @@ class ParserController extends Controller
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Response
+     * @param SourcesQueryBuilder $sourcesQueryBuilder
      */
-    public function __invoke(Request $request, Parser $parser)
+    public function __invoke(Request $request, Parser $parser, SourcesQueryBuilder $sourcesQueryBuilder): string
     {
-        $load = $parser->setLink("https://www.cbsnews.com/latest/rss/main")->getParseData();
-        foreach ($load['news'] as $item) {
-            $newsData = [
-                'title' => $item['title'],
-                'author' => 'admin',
-                'status' => 'draft',
-                'description' => $item['description'],
-                'url' => $item['link'],
-                'image' => $item['image'],
-            ];
+        $urls = $sourcesQueryBuilder->getAll();
 
-            News::create($newsData);
+        foreach($urls as $url) {
+            \dispatch(new JobNewsParsing($url['url']));
         }
-        dd($load['news']);
+        return 'Parsing completed';
     }
 }
